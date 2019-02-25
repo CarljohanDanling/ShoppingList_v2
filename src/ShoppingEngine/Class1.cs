@@ -2,10 +2,7 @@
 
 namespace ShoppingEngine
 {
-    public class Test
+    public class Class1
     {
-
-
-
     }
 }
