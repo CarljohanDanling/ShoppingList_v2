@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'ShoppingList Api'
+components:
+  parameters:
+    shoppingListIdParameter:
+      in: path
+      name: shoppinglistId
+      schema:
+        type: integer
+paths:
+  /shoppinglist:
+    get:
+      description: List of all shopping lists
+      responses:
+        '200':
+          description: Successfully returned shopping lists
+          content:
+            application/json: 
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: No shopping lists found
+    post:
+      description: Create a new shopping list
+      requestBody:
+        description: Name of the shopping list
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Successfully created a shopping list
+          content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                shoppinglistId:
+                  type: integer
+                  description: The shopping list Id
+                shoppinglistName:
+                  type: string
+                  description: The name of the shopping list
+        '400':
+          description: Unable to create a shopping list
+
+  /shoppinglist/{shoppinglistId}:
+    parameters:
+      - $ref: '#/components/parameters/shoppingListIdParameter'
+    get:
+      description: Detailed information about the shopping list
+      responses:
+        '200':
+          description: Successfully returned detailed information about the shopping list
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Unable to return detailed information about the shoppinglist
+    delete:
+      description: Delete an existing shopping list
+      responses:
+        '200':
+          description: Successfully deleted the shopping list
+        '400':
+          description: Could not delete the shopping list
