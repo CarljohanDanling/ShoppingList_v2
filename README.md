@@ -1,3 +1,3 @@
-# ShoppingList_v2
+# ShoppingList
 
-## This is a Shopping List program you can use when you're out shopping for example groceries.
+This is a Shopping List program you can use when you're out shopping.
