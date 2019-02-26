@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingListWebApi.Models;
 
 namespace ShoppingListWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/shoppinglist")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ShoppingListController : ControllerBase
     {
-        // GET api/values
+        // GET api/shoppinglist
+        // Get all shopping lists from database.
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public List<ShoppingList> GetAllShoppingListsFromDatabase()
         {
-            return new string[] { "value1", "value2" };
+            List<ShoppingList> shoppingList = new List<ShoppingList>();
+            return shoppingList;
         }
 
+        /*
         // GET api/values/5
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
@@ -41,5 +45,6 @@ namespace ShoppingListWebApi.Controllers
         public void Delete(int id)
         {
         }
+        */
     }
 }
