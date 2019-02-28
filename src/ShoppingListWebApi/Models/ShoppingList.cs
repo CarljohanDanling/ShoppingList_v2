@@ -6,8 +6,8 @@ namespace ShoppingListWebApi.Models
 {
     public class ShoppingList
     {
-        private string ShoppingListName { get; set; }
-        private double BudgetSum { get; set; }
-        private int ShoppingListId { get; set; }
+        public int ID { get; set; }
+        public string ShoppingListName { get; set; }
+        public double BudgetSum { get; set; }
     }
 }

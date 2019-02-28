@@ -6,7 +6,7 @@ components:
   parameters:
     shoppingListIdParameter:
       in: path
-      name: shoppinglistId
+      name: shoppinglistID
       schema:
         type: integer
 paths:
@@ -27,11 +27,19 @@ paths:
     post:
       description: Create a new shopping list
       requestBody:
-        description: Name of the shopping list
+        description: Add values for shopping list
+        required: true
         content:
           application/json:
             schema:
-              type: string
+              type: object
+              properties:
+                shoppingListName:
+                  type: string
+                  description: The name of the shopping list
+                budgetSum:
+                  type: number
+                  description: The budget of the shopping list
       responses:
         '201':
           description: Successfully created a shopping list
@@ -40,16 +48,19 @@ paths:
             schema:
               type: object
               properties:
-                shoppinglistId:
+                shoppingListId:
                   type: integer
-                  description: The shopping list Id
-                shoppinglistName:
+                  description: The shopping list ID
+                shoppingListName:
                   type: string
                   description: The name of the shopping list
+                budgetSum:
+                  type: number
+                  description: The budget of the shopping list
         '400':
           description: Unable to create a shopping list
 
-  /shoppinglist/{shoppinglistId}:
+  /shoppinglist/{shoppinglistID}:
     parameters:
       - $ref: '#/components/parameters/shoppingListIdParameter'
     get:

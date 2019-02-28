@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingListWebApi.Models;
+using ShoppingListWebApi.Database;
+using Newtonsoft.Json;
 
 namespace ShoppingListWebApi.Controllers
 {
@@ -11,13 +13,34 @@ namespace ShoppingListWebApi.Controllers
     [ApiController]
     public class ShoppingListController : ControllerBase
     {
+        private IRepository repo;
+
+        public ShoppingListController(IRepository repos)
+        {
+            repo = repos;
+        }
+
         // GET api/shoppinglist
         // Get all shopping lists from database.
         [HttpGet]
         public List<ShoppingList> GetAllShoppingListsFromDatabase()
         {
-            List<ShoppingList> shoppingList = new List<ShoppingList>();
+            List<ShoppingList> shoppingList = repo.GetAllShoppingLists();
             return shoppingList;
+        }
+
+        // POST api/shoppinglist
+        // POST shopping lists to database and returns the shopping list ID.
+        [HttpPost]
+        public int InsertShoppingListToDatabase([FromBody] ShoppingList values)
+        {
+            ShoppingList shoppingList = new ShoppingList()
+            {
+                ShoppingListName = values.ShoppingListName,
+                BudgetSum = values.BudgetSum
+            };
+
+            return repo.InsertShoppingList(shoppingList);
         }
 
         /*

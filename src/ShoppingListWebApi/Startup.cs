@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ShoppingListWebApi.Database;
 
 namespace ShoppingListWebApi
 {
@@ -25,6 +26,9 @@ namespace ShoppingListWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // on /api/shoppinglist then new ShoppingListController(IRepository)
+            // on /api/shoppinglist then new ShoppingListController(new Repository)
+            services.AddTransient<IRepository, Repository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
