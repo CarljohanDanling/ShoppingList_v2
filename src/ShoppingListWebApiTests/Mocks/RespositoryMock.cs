@@ -9,16 +9,15 @@ namespace ShoppingListWebApiTests.Mocks
     public class RespositoryMock : IRepository
     {
         public List<ShoppingList> MockResult { get; set; }
-        public ShoppingList MockResultShoppingList { get; set; }
 
         public List<ShoppingList> GetAllShoppingLists()
         {
             return MockResult;
         }
 
-        public int InsertShoppingList(ShoppingList shoppingList)
+        public List<ShoppingList> InsertShoppingListAndReturnsIt(ShoppingList shoppingList)
         {
-            return MockResultShoppingList.ID;
+            return MockResult;
         }
     }
 }

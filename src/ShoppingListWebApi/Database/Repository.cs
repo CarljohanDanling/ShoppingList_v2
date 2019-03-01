@@ -23,14 +23,17 @@ namespace ShoppingListWebApi.Database
             }
         }
 
-        public int InsertShoppingList(ShoppingList shoppingList)
+        public List<ShoppingList> InsertShoppingListAndReturnsIt(ShoppingList shoppingList)
         {
             string sqlInsert = "INSERT INTO ShoppingList (ShoppingListName, BudgetSum) Values (@ShoppingListName, @BudgetSum); SELECT CAST(SCOPE_IDENTITY() as int)";
             
             using (var connection = new SqlConnection(connectionStringLocal))
             {
-                var ShoppingListID = connection.ExecuteScalar<int>(sqlInsert, new { shoppingList.ShoppingListName, shoppingList.BudgetSum });
-                return ShoppingListID;
+                var shoppingListID = connection.ExecuteScalar<int>(sqlInsert, new { shoppingList.ShoppingListName, shoppingList.BudgetSum });
+
+                string sqlReturnSpecificShoppingList = $"SELECT * FROM ShoppingList WHERE ID = @ShoppingListID";
+
+                return connection.Query<ShoppingList>(sqlReturnSpecificShoppingList, new { ShoppingListID = shoppingListID }).ToList();
             }
         }
     }

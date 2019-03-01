@@ -48,7 +48,7 @@ paths:
             schema:
               type: object
               properties:
-                shoppingListId:
+                id:
                   type: integer
                   description: The shopping list ID
                 shoppingListName:

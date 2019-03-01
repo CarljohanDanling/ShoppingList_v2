@@ -32,15 +32,14 @@ namespace ShoppingListWebApi.Controllers
         // POST api/shoppinglist
         // POST shopping lists to database and returns the shopping list ID.
         [HttpPost]
-        public int InsertShoppingListToDatabase([FromBody] ShoppingList values)
+        public List<ShoppingList> InsertShoppingListToDatabase([FromBody] ShoppingList values)
         {
-            ShoppingList shoppingList = new ShoppingList()
+            ShoppingList shoppingListObject = new ShoppingList()
             {
                 ShoppingListName = values.ShoppingListName,
                 BudgetSum = values.BudgetSum
             };
-
-            return repo.InsertShoppingList(shoppingList);
+            return repo.InsertShoppingListAndReturnsIt(shoppingListObject);
         }
 
         /*
