@@ -87,7 +87,7 @@ namespace ShoppingListWebApiTests
         public void InsertShoppingListToDatabase_NoShoppingList_NoneAddedShoppingList()
         {
             //Arrange
-            ShoppingList shoppingList = new ShoppingList();
+            Exception expectedException = null;
             var repoMock = new RespositoryMock()
             {
                 MockResult = new List<ShoppingList>()
@@ -95,28 +95,34 @@ namespace ShoppingListWebApiTests
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            var result = sut.InsertShoppingListToDatabase(shoppingList);
+            try
+            {
+                var result = sut.InsertShoppingListToDatabase(repoMock.MockResult[0]);
+            }
+            catch (Exception ex)
+            {
+                expectedException = ex;
+            }
 
             //Assert
-            Assert.Empty(result);
+            Assert.NotNull(expectedException);
         }
 
         [Fact]
         public void InsertShoppingListToDatabase_OneShoppingList_OneShoppingListAdded()
         {
             //Arrange
-            ShoppingList shoppingList = new ShoppingList();
             var repoMock = new RespositoryMock()
             {
                 MockResult = new List<ShoppingList>()
                 {
-                    shoppingList
+                    new ShoppingList()
                 }
             };
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            var result = sut.InsertShoppingListToDatabase(shoppingList);
+            var result = sut.InsertShoppingListToDatabase(repoMock.MockResult[0]);
 
             //Assert
             Assert.Single(result);
