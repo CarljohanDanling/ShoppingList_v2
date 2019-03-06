@@ -23,18 +23,38 @@ namespace ShoppingListWebApi.Database
             }
         }
 
-        public List<ShoppingList> InsertShoppingListAndReturnsIt(ShoppingList shoppingList)
+        public int InsertShoppingList(ShoppingList shoppingList)
         {
-            string sqlInsert = "INSERT INTO ShoppingList (ShoppingListName, BudgetSum) Values (@ShoppingListName, @BudgetSum); SELECT CAST(SCOPE_IDENTITY() as int)";
+            string sqlInsert = "INSERT INTO ShoppingList (Name, BudgetSum) Values (@Name, @BudgetSum); SELECT CAST(SCOPE_IDENTITY() as int)";
             
             using (var connection = new SqlConnection(connectionStringLocal))
             {
-                var shoppingListID = connection.ExecuteScalar<int>(sqlInsert, new { shoppingList.ShoppingListName, shoppingList.BudgetSum });
-
-                string sqlReturnSpecificShoppingList = $"SELECT * FROM ShoppingList WHERE ID = @ShoppingListID";
-
-                return connection.Query<ShoppingList>(sqlReturnSpecificShoppingList, new { ShoppingListID = shoppingListID }).ToList();
+                var shoppingListID = connection.ExecuteScalar<int>(sqlInsert, new { shoppingList.Name, shoppingList.BudgetSum });
+                return shoppingListID;
             }
         }
+
+        public void UpdateShoppingList(ShoppingList shoppingList)
+        {
+            string sqlUpdate = "UPDATE ShoppingList SET Name = @Name, BudgetSum = @BudgetSum WHERE ID = @ID;";
+
+            using (var connection = new SqlConnection(connectionStringLocal))
+            {
+                connection.Execute(sqlUpdate, new { shoppingList.ID, shoppingList.Name, shoppingList.BudgetSum });
+            }
+        }
+
+        //public List<Item> InsertItemAndReturnsIt (Item item)
+        //{
+        //    string sqlInsert = "INSERT INTO Item (Name, Price, Quantity, ShoppingListID) Values (@Name, @Price, @Quantity, @ShoppingListID); SELECT CAST(SCOPE_IDENTITY() as int)";
+
+        //    using (var connection = new SqlConnection(connectionStringLocal))
+        //    {
+        //        var itemID = connection.ExecuteScalar<int>(sqlInsert, new { item.Name, item.Price, item.Quantity, item.ShoppingListID });
+
+        //        string sqlReturnSpecificItem = $"SELECT * FROM Item WHERE ID = @ItemID";
+        //        return connection.Query<Item>(sqlReturnSpecificItem, new { ItemID = itemID }).ToList();
+        //    }
+        //}
     }
 }

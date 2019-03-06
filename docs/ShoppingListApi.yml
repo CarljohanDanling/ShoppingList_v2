@@ -38,10 +38,10 @@ paths:
                   type: string
                   description: The name of the shopping list
                 budgetSum:
-                  type: number
+                  type: integer
                   description: The budget of the shopping list
       responses:
-        '201':
+        '200':
           description: Successfully created a shopping list
           content:
            application/json:
@@ -74,6 +74,13 @@ paths:
                 type: object
         '400':
           description: Unable to return detailed information about the shoppinglist
+    put:
+      description: Update the shopping list
+      responses:
+        '200':
+          description: Successfully updated the shopping list
+        '400':
+          description: Unable to update the shopping list
     delete:
       description: Delete an existing shopping list
       responses:

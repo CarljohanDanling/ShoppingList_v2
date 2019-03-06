@@ -4,12 +4,12 @@ using System.Text;
 
 namespace ShoppingListWebApi.Models
 {
-    class Item
+    public class Item
     {
-        private int ItemID { get; set; }
-        private string Name { get; set; }
-        private double Price { get; set; }
-        private double Quantity { get; set; }
-        private int ShoppingListID { get; set; }
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public double Quantity { get; set; }
+        public int ShoppingListID { get; set; }
     }
 }

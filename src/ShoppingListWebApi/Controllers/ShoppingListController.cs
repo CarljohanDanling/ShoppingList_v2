@@ -30,16 +30,51 @@ namespace ShoppingListWebApi.Controllers
         }
 
         // POST api/shoppinglist
-        // POST shopping lists to database and returns the shopping list ID.
+        // POST shopping lists to database and returns it.
         [HttpPost]
-        public List<ShoppingList> InsertShoppingListToDatabase([FromBody] ShoppingList values)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult InsertShoppingListToDatabase([FromBody] ShoppingList values)
         {
-            ShoppingList shoppingListObject = new ShoppingList()
+            ShoppingList shoppingListObject;
+            try
             {
-                ShoppingListName = values.ShoppingListName,
-                BudgetSum = values.BudgetSum
-            };
-            return repo.InsertShoppingListAndReturnsIt(shoppingListObject);
+                shoppingListObject = new ShoppingList()
+                {
+                    Name = values.Name,
+                    BudgetSum = values.BudgetSum
+                };
+                shoppingListObject.ID = repo.InsertShoppingList(shoppingListObject);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message + "(Unable to add shopping list)");
+            }
+            return Ok(shoppingListObject);
+        }
+
+        // PUT api/shoppinglist/5
+        // PUT to update/change the shopping list in database.
+        [HttpPut("{shoppingListID}")]
+        public IActionResult UpdateShoppingList(int shoppingListID, [FromBody] ShoppingList values)
+        {
+            ShoppingList shoppingListObject;
+            try
+            {
+                shoppingListObject = new ShoppingList()
+                {
+                    ID = shoppingListID,
+                    Name = values.Name,
+                    BudgetSum = values.BudgetSum
+                };
+
+                repo.UpdateShoppingList(shoppingListObject);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message + "(Unable to update shopping list)");
+            }
+            return Ok(shoppingListObject);
         }
 
         /*
@@ -53,12 +88,6 @@ namespace ShoppingListWebApi.Controllers
         // POST api/values
         [HttpPost]
         public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
         {
         }
 

@@ -9,6 +9,7 @@ namespace ShoppingListWebApi.Database
     public interface IRepository
     {
         List<ShoppingList> GetAllShoppingLists();
-        List<ShoppingList> InsertShoppingListAndReturnsIt(ShoppingList shoppingList);
+        int InsertShoppingList(ShoppingList shoppingList);
+        void UpdateShoppingList(ShoppingList shoppingList);
     }
 }
