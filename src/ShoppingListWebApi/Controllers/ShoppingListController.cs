@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingListWebApi.Models;
 using ShoppingListWebApi.Database;
-using Newtonsoft.Json;
 
 namespace ShoppingListWebApi.Controllers
 {
@@ -23,7 +22,7 @@ namespace ShoppingListWebApi.Controllers
         // GET api/shoppinglist
         // Get all shopping lists from database.
         [HttpGet]
-        public List<ShoppingList> GetAllShoppingListsFromDatabase()
+        public List<ShoppingList> GetAllShoppingLists()
         {
             List<ShoppingList> shoppingList = repo.GetAllShoppingLists();
             return shoppingList;
@@ -34,7 +33,7 @@ namespace ShoppingListWebApi.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult InsertShoppingListToDatabase([FromBody] ShoppingList values)
+        public IActionResult InsertShoppingList([FromBody] ShoppingList values)
         {
             ShoppingList shoppingListObject;
             try
@@ -44,7 +43,7 @@ namespace ShoppingListWebApi.Controllers
                     Name = values.Name,
                     BudgetSum = values.BudgetSum
                 };
-                shoppingListObject.ID = repo.InsertShoppingList(shoppingListObject);
+                shoppingListObject.ShoppingListId = repo.InsertShoppingList(shoppingListObject);
             }
             catch (Exception ex)
             {
@@ -53,17 +52,28 @@ namespace ShoppingListWebApi.Controllers
             return Ok(shoppingListObject);
         }
 
+        // GET /api/shoppinglist/5
+        // GET detailed information about the shopping list (name, budget)
+        [HttpGet("{shoppingListId}")]
+        public List<ShoppingList> GetDetailedInformationOfSpecificShoppingList(int shoppingListId)
+        {
+            List<ShoppingList> shoppingList = repo.GetDetailedInformationOfSpecificShoppingList(shoppingListId);
+            return shoppingList;
+        }
+
         // PUT api/shoppinglist/5
         // PUT to update/change the shopping list in database.
-        [HttpPut("{shoppingListID}")]
-        public IActionResult UpdateShoppingList(int shoppingListID, [FromBody] ShoppingList values)
+        [HttpPut("{shoppingListId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult UpdateShoppingList(int shoppingListId, [FromBody] ShoppingList values)
         {
             ShoppingList shoppingListObject;
             try
             {
                 shoppingListObject = new ShoppingList()
                 {
-                    ID = shoppingListID,
+                    ShoppingListId = shoppingListId,
                     Name = values.Name,
                     BudgetSum = values.BudgetSum
                 };
@@ -77,25 +87,25 @@ namespace ShoppingListWebApi.Controllers
             return Ok(shoppingListObject);
         }
 
-        /*
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        // DELETE api/shoppinglist/5
+        // Deletes the actual shopping list
+        [HttpDelete("{shoppingListId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteShoppingList(int shoppingListId)
         {
-            return "value";
+            try
+            {
+                repo.DeleteShoppingList(shoppingListId);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message + "(Unable to delete shopping list)");
+            }
+            return Ok("Successfully deleted shopping list");
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-        */
+        
+        
     }
 }

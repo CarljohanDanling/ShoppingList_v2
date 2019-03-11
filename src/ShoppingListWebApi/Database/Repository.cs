@@ -10,9 +10,10 @@ namespace ShoppingListWebApi.Database
 {
     public class Repository : IRepository
     {
-        // ConnectionString towards local Database
+        // Connection String towards local Database
         private string connectionStringLocal = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=ShoppingList;Integrated Security=True";
 
+        // Gets all the shopping lists in database.
         public List<ShoppingList> GetAllShoppingLists()
         {
             string sqlGet = "SELECT * FROM ShoppingList SELECT CAST(SCOPE_IDENTITY() as int)";
@@ -23,6 +24,7 @@ namespace ShoppingListWebApi.Database
             }
         }
 
+        // Insert a new shopping list into database.
         public int InsertShoppingList(ShoppingList shoppingList)
         {
             string sqlInsert = "INSERT INTO ShoppingList (Name, BudgetSum) Values (@Name, @BudgetSum); SELECT CAST(SCOPE_IDENTITY() as int)";
@@ -34,27 +36,48 @@ namespace ShoppingListWebApi.Database
             }
         }
 
+        // Gets detailed information about specific shopping list in database.
+        public List<ShoppingList> GetDetailedInformationOfSpecificShoppingList(int shoppingListId)
+        {
+            string sqlGet = "SELECT * FROM ShoppingList WHERE ShoppingListId = @shoppingListId";
+
+            using (var connection = new SqlConnection(connectionStringLocal))
+            {
+                return connection.Query<ShoppingList>(sqlGet, new { ShoppingListId = shoppingListId }).ToList();
+            }
+        }
+
+        // Updates only the shopping list's Name and BudgetSum.
         public void UpdateShoppingList(ShoppingList shoppingList)
         {
             string sqlUpdate = "UPDATE ShoppingList SET Name = @Name, BudgetSum = @BudgetSum WHERE ID = @ID;";
 
             using (var connection = new SqlConnection(connectionStringLocal))
             {
-                connection.Execute(sqlUpdate, new { shoppingList.ID, shoppingList.Name, shoppingList.BudgetSum });
+                connection.Execute(sqlUpdate, new { shoppingList.ShoppingListId, shoppingList.Name, shoppingList.BudgetSum });
             }
         }
 
-        //public List<Item> InsertItemAndReturnsIt (Item item)
-        //{
-        //    string sqlInsert = "INSERT INTO Item (Name, Price, Quantity, ShoppingListID) Values (@Name, @Price, @Quantity, @ShoppingListID); SELECT CAST(SCOPE_IDENTITY() as int)";
+        // Deletes the actual shopping list from database.
+        public void DeleteShoppingList(int shoppingListId)
+        {
+            string sqlDelete = "DELETE FROM ShoppingList WHERE ShoppingListId = @shoppingListId;";
 
-        //    using (var connection = new SqlConnection(connectionStringLocal))
-        //    {
-        //        var itemID = connection.ExecuteScalar<int>(sqlInsert, new { item.Name, item.Price, item.Quantity, item.ShoppingListID });
+            using (var connection = new SqlConnection(connectionStringLocal))
+            {
+                connection.Execute(sqlDelete, new { ShoppingListId = shoppingListId});
+            }
+        }
 
-        //        string sqlReturnSpecificItem = $"SELECT * FROM Item WHERE ID = @ItemID";
-        //        return connection.Query<Item>(sqlReturnSpecificItem, new { ItemID = itemID }).ToList();
-        //    }
-        //}
+        // Gets all items from database
+        public List<Item> GetAllItems()
+        {
+            string sqlGet = "SELECT * FROM Item";
+
+            using (var connection = new SqlConnection(connectionStringLocal))
+            {
+                return connection.Query<Item>(sqlGet).ToList();
+            }
+        }
     }
 }

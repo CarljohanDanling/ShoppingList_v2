@@ -22,7 +22,7 @@ namespace ShoppingListWebApiTests
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            var result = sut.GetAllShoppingListsFromDatabase();
+            var result = sut.GetAllShoppingLists();
 
             //Assert
             Assert.Empty(result);
@@ -38,7 +38,7 @@ namespace ShoppingListWebApiTests
                 {
                     new ShoppingList()
                     {
-                        ID = 1,
+                        ShoppingListId = 1,
                         BudgetSum = 100,
                         Name ="Test list1"
                     }
@@ -47,7 +47,7 @@ namespace ShoppingListWebApiTests
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            var result = sut.GetAllShoppingListsFromDatabase();
+            var result = sut.GetAllShoppingLists();
 
             //Assert
             Assert.Single(result);
@@ -63,13 +63,13 @@ namespace ShoppingListWebApiTests
                 {
                     new ShoppingList()
                     {
-                        ID = 1,
+                        ShoppingListId = 1,
                         BudgetSum = 100,
                         Name ="Test list1"
                     },
                     new ShoppingList()
                     {
-                        ID = 2,
+                        ShoppingListId = 2,
                         BudgetSum = 120,
                         Name ="Test list2"
                     }
@@ -78,7 +78,7 @@ namespace ShoppingListWebApiTests
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            var result = sut.GetAllShoppingListsFromDatabase();
+            var result = sut.GetAllShoppingLists();
 
             //Assert
             Assert.True(result.Count > 1);
@@ -95,7 +95,7 @@ namespace ShoppingListWebApiTests
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            Action act = () => sut.InsertShoppingListToDatabase(repoMock.MockShoppingListResult[0]);
+            Action act = () => sut.InsertShoppingList(repoMock.MockShoppingListResult[0]);
 
             //Assert
             Assert.Throws<ArgumentOutOfRangeException>(act);
@@ -111,7 +111,7 @@ namespace ShoppingListWebApiTests
                 {
                     new ShoppingList()
                     {
-                        ID = 21,
+                        ShoppingListId = 21,
                         Name = "TestShoppingList",
                         BudgetSum = 280
                     }
@@ -120,11 +120,53 @@ namespace ShoppingListWebApiTests
             var sut = new ShoppingListController(repoMock);
 
             //Act
-            var result = sut.InsertShoppingListToDatabase(repoMock.MockShoppingListResult[0]);
+            var result = sut.InsertShoppingList(repoMock.MockShoppingListResult[0]);
             var okResult = result as OkObjectResult;
 
             //Assert
             Assert.Equal(200, okResult.StatusCode);
+        }
+
+        [Fact]
+        public void GetDetailedInformationOfSpecificShoppingList_NoShoppingList_EmptyListOfShoppingList()
+        {
+            //Arrange
+            var repoMock = new RepositoryMock()
+            {
+                MockShoppingListResult = new List<ShoppingList>()
+            };
+            var sut = new ShoppingListController(repoMock);
+
+            //Act
+            var result = sut.GetDetailedInformationOfSpecificShoppingList(5);
+
+            //Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetDetailedInformationOfSpecificShoppingList_OneShoppingList_ListContainingOneShoppingList()
+        {
+            //Arrange
+            var repoMock = new RepositoryMock()
+            {
+                MockShoppingListResult = new List<ShoppingList>()
+                {
+                    new ShoppingList()
+                    {
+                        ShoppingListId = 5,
+                        BudgetSum = 100,
+                        Name ="Test list1"
+                    }
+                }
+            };
+            var sut = new ShoppingListController(repoMock);
+
+            //Act
+            var result = sut.GetDetailedInformationOfSpecificShoppingList(repoMock.MockShoppingListResult[0].ShoppingListId);
+
+            //Assert
+            Assert.Single(result);
         }
     }
 }

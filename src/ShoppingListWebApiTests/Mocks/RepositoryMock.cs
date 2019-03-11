@@ -10,16 +10,30 @@ namespace ShoppingListWebApiTests.Mocks
     {
         public void UpdateShoppingList(ShoppingList shoppingList) { }
 
+        public void DeleteShoppingList(int shoppingListId) { }
+
         public List<ShoppingList> MockShoppingListResult { get; set; }
+
+        public List<Item> MockItemListResult { get; set; }
 
         public List<ShoppingList> GetAllShoppingLists()
         {
             return MockShoppingListResult;
         }
 
+        public List<ShoppingList> GetDetailedInformationOfSpecificShoppingList(int shoppingListId)
+        {
+            return MockShoppingListResult;
+        }
+
         public int InsertShoppingList(ShoppingList shoppingList)
         {
-            return MockShoppingListResult[0].ID;
+            return MockShoppingListResult[0].ShoppingListId;
+        }
+
+        public List<Item> GetAllItems()
+        {
+            return MockItemListResult;
         }
     }
 }

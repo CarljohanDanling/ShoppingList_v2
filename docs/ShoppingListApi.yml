@@ -75,7 +75,7 @@ paths:
         '400':
           description: Unable to return detailed information about the shoppinglist
     put:
-      description: Update the shopping list
+      description: Updates the shopping list
       responses:
         '200':
           description: Successfully updated the shopping list
@@ -88,3 +88,18 @@ paths:
           description: Successfully deleted the shopping list
         '400':
           description: Could not delete the shopping list
+
+  /item:
+    get:
+      description: List of all items in database
+      responses:
+        '200':
+          description: Successfully returned items
+          content:
+            application/json: 
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: No items found
