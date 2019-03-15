@@ -104,8 +104,5 @@ namespace ShoppingListWebApi.Controllers
             }
             return Ok("Successfully deleted shopping list");
         }
-
-        
-        
     }
 }

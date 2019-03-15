@@ -14,7 +14,7 @@ namespace ShoppingListWebApiTests.Mocks
 
         public List<ShoppingList> MockShoppingListResult { get; set; }
 
-        public List<Item> MockItemListResult { get; set; }
+        public List<Item> MockItemResult { get; set; }
 
         public List<ShoppingList> GetAllShoppingLists()
         {
@@ -31,9 +31,6 @@ namespace ShoppingListWebApiTests.Mocks
             return MockShoppingListResult[0].ShoppingListId;
         }
 
-        public List<Item> GetAllItems()
-        {
-            return MockItemListResult;
-        }
+        public void InsertItem(Item item) { }
     }
 }

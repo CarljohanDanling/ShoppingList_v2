@@ -1,7 +1,6 @@
 using System;
 using Xunit;
 using ShoppingListWebApi.Controllers;
-using ShoppingListWebApi.Database;
 using ShoppingListWebApiTests.Mocks;
 using System.Collections.Generic;
 using ShoppingListWebApi.Models;

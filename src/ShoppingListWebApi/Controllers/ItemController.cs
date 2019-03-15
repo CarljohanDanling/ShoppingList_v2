@@ -9,7 +9,7 @@ using ShoppingListWebApi.Models;
 
 namespace ShoppingListWebApi.Controllers
 {
-    [Route("api/item")]
+    [Route("api/shoppinglist/{shoppingListId}/item")]
     [ApiController]
     public class ItemController : ControllerBase
     {
@@ -20,13 +20,28 @@ namespace ShoppingListWebApi.Controllers
             repo = repos;
         }
 
-        // GET api/shoppinglist/item
-        // GET all items from database
-        [HttpGet]
-        public List<Item> GetAllItemsFromDatabase()
+        // POST /api/shoppinglist/5/item
+        // POST an item into a shoppinglist
+        [HttpPost]
+        public IActionResult InsertItem(int shoppingListId, [FromBody] Item values)
         {
-            List<Item> items = repo.GetAllItems();
-            return items;
+            Item itemObject;
+            try
+            {
+                itemObject = new Item()
+                {
+                    Name = values.Name,
+                    Price = values.Price,
+                    Quantity = values.Quantity,
+                    ShoppingListId = shoppingListId
+                };
+                repo.InsertItem(itemObject);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message + "(Unable to add item)");
+            }
+            return Ok("Item added");
         }
 
         /*

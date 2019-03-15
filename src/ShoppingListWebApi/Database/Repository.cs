@@ -69,14 +69,14 @@ namespace ShoppingListWebApi.Database
             }
         }
 
-        // Gets all items from database
-        public List<Item> GetAllItems()
+        // Insert an shopping list's item into database
+        public void InsertItem(Item item)
         {
-            string sqlGet = "SELECT * FROM Item";
+            string sqlInsert = "INSERT INTO Item (Name, Price, Quantity, ShoppingListId) Values (@Name, @Price, @Quantity, @ShoppingListId)";
 
             using (var connection = new SqlConnection(connectionStringLocal))
             {
-                return connection.Query<Item>(sqlGet).ToList();
+                connection.ExecuteScalar<Item>(sqlInsert, new { item.Name, item.Price, item.Quantity, item.ShoppingListId });
             }
         }
     }

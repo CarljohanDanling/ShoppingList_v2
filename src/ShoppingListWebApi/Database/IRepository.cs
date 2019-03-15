@@ -13,6 +13,6 @@ namespace ShoppingListWebApi.Database
         List<ShoppingList> GetDetailedInformationOfSpecificShoppingList(int shoppingListId);
         void UpdateShoppingList(ShoppingList shoppingList);
         void DeleteShoppingList(int shoppingListId);
-        List<Item> GetAllItems();
+        void InsertItem(Item item);
     }
 }
