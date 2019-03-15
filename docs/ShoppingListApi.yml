@@ -89,9 +89,11 @@ paths:
         '400':
           description: Could not delete the shopping list
 
-  /item:
+  /shoppinglist/{shoppinglistID}/item:
+    parameters:
+      - $ref: '#/components/parameters/shoppingListIdParameter'
     get:
-      description: List of all items in database
+      description: List of all items related to specific shopping list
       responses:
         '200':
           description: Successfully returned items
@@ -103,3 +105,8 @@ paths:
                   type: object
         '400':
           description: No items found
+    post:
+      description: Insert item into database related to specific shopping list
+      responses:
+       '200':
+      #  TBA...
