@@ -20,6 +20,15 @@ namespace ShoppingListWebApi.Controllers
             repo = repos;
         }
 
+        // GET /api/shoppinglist/5/item
+        // GET all items related to specific shopping list
+        [HttpGet]
+        public List<Item> GetAllItemsRelatedToSpecificShoppingList(int shoppingListId)
+        {
+            List<Item> items = repo.GetAllItemsRelatedToSpecificShoppingList(shoppingListId);
+            return items;
+        }
+
         // POST /api/shoppinglist/5/item
         // POST an item into a shoppinglist
         [HttpPost]
@@ -43,6 +52,8 @@ namespace ShoppingListWebApi.Controllers
             }
             return Ok("Item added");
         }
+
+
 
         /*
         // GET: api/Item/5

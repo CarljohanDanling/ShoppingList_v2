@@ -32,5 +32,10 @@ namespace ShoppingListWebApiTests.Mocks
         }
 
         public void InsertItem(Item item) { }
+
+        public List<Item> GetAllItemsRelatedToSpecificShoppingList(int shoppingListId)
+        {
+            return MockItemResult;
+        }
     }
 }

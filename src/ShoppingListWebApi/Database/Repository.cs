@@ -79,5 +79,16 @@ namespace ShoppingListWebApi.Database
                 connection.ExecuteScalar<Item>(sqlInsert, new { item.Name, item.Price, item.Quantity, item.ShoppingListId });
             }
         }
+
+        // Get all items related to specific shopping list
+        public List<Item> GetAllItemsRelatedToSpecificShoppingList(int shoppingListId)
+        {
+            string sqlGet = "SELECT * FROM Item WHERE ShoppingListId = @shoppingListId";
+
+            using (var connection = new SqlConnection(connectionStringLocal))
+            {
+                return connection.Query<Item>(sqlGet, new { ShoppingListId = shoppingListId }).ToList();
+            }
+        }
     }
 }

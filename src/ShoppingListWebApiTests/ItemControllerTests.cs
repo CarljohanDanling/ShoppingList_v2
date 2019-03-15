@@ -53,5 +53,23 @@ namespace ShoppingListWebApiTests
             //Assert
             Assert.Equal(200, okResult.StatusCode);
         }
+
+        [Fact]
+        public void GetAllItemsRelatedToSpecificShoppingList_NoItems_EpmtyListOfItems()
+        {
+            //Arrange
+            var repoMock = new RepositoryMock()
+            {
+                MockItemResult = new List<Item>()
+            };
+            var sut = new ItemController(repoMock);
+
+            //Act
+            int shoppingListId = 2;
+            var result = sut.GetAllItemsRelatedToSpecificShoppingList(shoppingListId);
+
+            //Assert
+            Assert.Empty(result);
+        }
     }
 }
