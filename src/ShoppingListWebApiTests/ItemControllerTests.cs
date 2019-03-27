@@ -11,7 +11,7 @@ namespace ShoppingListWebApiTests
     public class ItemControllerTests
     {
         [Fact]
-        public void InsertItemToDatabase_NoItem_ExceptionArgumentOutOfRange()
+        public void InsertItemToDatabase_InputItemIsNull_StatusCod500IsReturned()
         {
             //Arrange
             var repoMock = new RepositoryMock()
@@ -21,10 +21,11 @@ namespace ShoppingListWebApiTests
             var sut = new ItemController(repoMock);
 
             //Act
-            Action act = () => sut.InsertItem(repoMock.MockItemResult[0].ShoppingListId, repoMock.MockItemResult[0]);
+            var result = sut.InsertItem(5, null);
 
             //Assert
-            Assert.Throws<ArgumentOutOfRangeException>(act);
+            var objectResult = result as ObjectResult;
+            Assert.Equal(500, objectResult.StatusCode);
         }
 
         [Fact]
@@ -48,10 +49,9 @@ namespace ShoppingListWebApiTests
 
             //Act
             var result = sut.InsertItem(repoMock.MockItemResult[0].ShoppingListId, repoMock.MockItemResult[0]);
-            var okResult = result as OkObjectResult;
 
             //Assert
-            Assert.Equal(200, okResult.StatusCode);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]

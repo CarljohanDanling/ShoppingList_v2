@@ -57,7 +57,7 @@ paths:
                 budgetSum:
                   type: number
                   description: The budget of the shopping list
-        '400':
+        '500':
           description: Unable to create a shopping list
 
   /shoppinglist/{shoppinglistID}:
@@ -108,5 +108,7 @@ paths:
     post:
       description: Insert item into database related to specific shopping list
       responses:
-       '200':
-      #  TBA...
+        '200':
+          description: Successfully added item to related to specific shopping list
+        '500':
+          description: Unable to add item

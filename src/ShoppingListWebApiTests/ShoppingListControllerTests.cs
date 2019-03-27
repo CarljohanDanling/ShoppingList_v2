@@ -5,13 +5,14 @@ using ShoppingListWebApiTests.Mocks;
 using System.Collections.Generic;
 using ShoppingListWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Web.Http;
 
 namespace ShoppingListWebApiTests
 {
     public class ShoppingListControllerTests
     {
         [Fact]
-        public void GetAllShoppingListsFromDatabase_NoShoppingLists_EmptyListOfShoppingLists()
+        public void GetAllShoppingLists_NoShoppingLists_EmptyListOfShoppingLists()
         {
             //Arrange
             var repoMock = new RepositoryMock()
@@ -28,7 +29,7 @@ namespace ShoppingListWebApiTests
         }
 
         [Fact]
-        public void GetAllShoppingListsFromDatabase_OneShoppingList_ListContainingOneShoppingList()
+        public void GetAllShoppingLists_OneShoppingListInRepo_ListContainingOneShoppingList()
         {
             //Arrange
             var repoMock = new RepositoryMock()
@@ -53,7 +54,7 @@ namespace ShoppingListWebApiTests
         }
 
         [Fact]
-        public void GetAllShoppingListsFromDatabase_ManyShoppingLists_ListContainingManyShoppingLists()
+        public void GetAllShoppingLists_ManyShoppingListsInRepo_ListContainingManyShoppingLists()
         {
             //Arrange
             var repoMock = new RepositoryMock()
@@ -84,7 +85,7 @@ namespace ShoppingListWebApiTests
         }
 
         [Fact]
-        public void InsertShoppingListToDatabase_NoShoppingList_ExceptionArgumentOutOfRange()
+        public void InsertShoppingList_InputShoppingListIsNull_StatusCode500IsReturned()
         {
             //Arrange
             var repoMock = new RepositoryMock()
@@ -93,15 +94,16 @@ namespace ShoppingListWebApiTests
             };
             var sut = new ShoppingListController(repoMock);
 
-            //Act
-            Action act = () => sut.InsertShoppingList(repoMock.MockShoppingListResult[0]);
+            //Act 
+            var result = sut.InsertShoppingList(null);
 
             //Assert
-            Assert.Throws<ArgumentOutOfRangeException>(act);
+            var objectResult = result as ObjectResult;
+            Assert.Equal(500, objectResult.StatusCode);
         }
 
         [Fact]
-        public void InsertShoppingListToDatabase_OneShoppingList_OneShoppingListAdded()
+        public void InsertShoppingList_OneShoppingList_StatusCode200IsReturned()
         {
             //Arrange
             var repoMock = new RepositoryMock()
@@ -120,10 +122,9 @@ namespace ShoppingListWebApiTests
 
             //Act
             var result = sut.InsertShoppingList(repoMock.MockShoppingListResult[0]);
-            var okResult = result as OkObjectResult;
 
             //Assert
-            Assert.Equal(200, okResult.StatusCode);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]

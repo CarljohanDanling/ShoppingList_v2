@@ -34,26 +34,17 @@ namespace ShoppingListWebApi.Controllers
         [HttpPost]
         public IActionResult InsertItem(int shoppingListId, [FromBody] Item values)
         {
-            Item itemObject;
             try
             {
-                itemObject = new Item()
-                {
-                    Name = values.Name,
-                    Price = values.Price,
-                    Quantity = values.Quantity,
-                    ShoppingListId = shoppingListId
-                };
-                repo.InsertItem(itemObject);
+                values.ShoppingListId = shoppingListId;
+                repo.InsertItem(values);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(400, ex.Message + "(Unable to add item)");
+                return StatusCode(500, "Unable to add item");
             }
             return Ok("Item added");
         }
-
-
 
         /*
         // GET: api/Item/5

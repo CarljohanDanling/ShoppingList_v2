@@ -32,23 +32,23 @@ namespace ShoppingListWebApi.Controllers
         // POST shopping lists to database and returns it.
         [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public IActionResult InsertShoppingList([FromBody] ShoppingList values)
         {
-            ShoppingList shoppingListObject;
+            ShoppingList shoppingListObject = new ShoppingList();
+
             try
             {
-                shoppingListObject = new ShoppingList()
-                {
-                    Name = values.Name,
-                    BudgetSum = values.BudgetSum
-                };
-                shoppingListObject.ShoppingListId = repo.InsertShoppingList(shoppingListObject);
+                shoppingListObject.Name = values.Name;
+                shoppingListObject.BudgetSum = values.BudgetSum;
+
+                shoppingListObject.ShoppingListId = repo.InsertShoppingList(values);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(400, ex.Message + "(Unable to add shopping list)");
+                return StatusCode(500, "(Unable to add shopping list)");
             }
+
             return Ok(shoppingListObject);
         }
 
@@ -68,21 +68,14 @@ namespace ShoppingListWebApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult UpdateShoppingList(int shoppingListId, [FromBody] ShoppingList values)
         {
-            ShoppingList shoppingListObject;
+            ShoppingList shoppingListObject = new ShoppingList();
             try
             {
-                shoppingListObject = new ShoppingList()
-                {
-                    ShoppingListId = shoppingListId,
-                    Name = values.Name,
-                    BudgetSum = values.BudgetSum
-                };
-
                 repo.UpdateShoppingList(shoppingListObject);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(400, ex.Message + "(Unable to update shopping list)");
+                return StatusCode(400, "(Unable to update shopping list)");
             }
             return Ok(shoppingListObject);
         }
