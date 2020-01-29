@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingListWebApi.Model;
 using Microsoft.AspNetCore.JsonPatch;
+using ShoppingListWebApi.Model;
 
 namespace ShoppingListWebApi.Controllers
 {

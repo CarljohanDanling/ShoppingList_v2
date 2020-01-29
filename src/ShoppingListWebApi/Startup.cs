@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using ShoppingListWebApi.Model;
+using Newtonsoft.Json;
 
 namespace ShoppingListWebApi
 {
@@ -20,16 +21,18 @@ namespace ShoppingListWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             // Prevents returned broken JSON.
             services.AddMvc()
-                .AddJsonOptions(
-                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                );
-            
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
             // Configuring DI-for database access.
-            services.AddDbContext<ShoppingListContext>(options => options.UseSqlServer(@"Data Source=(local)\SQLEXPRESS;Initial Catalog=ShoppingList;Integrated Security=True"));
+            services.AddDbContext<ShoppingListContext>(options =>
+                options.UseSqlServer(@"Data Source=(local)\SQLEXPRESS;Initial Catalog=ShoppingList;Integrated Security=True"));
+
+            services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

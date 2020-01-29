@@ -1,10 +1,10 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using ShoppingListWebApp.Model;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace ShoppingListWebApp.Pages.Shopper
 {

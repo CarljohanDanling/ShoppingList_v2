@@ -26,7 +26,8 @@ namespace ShoppingListWebApp
             });
 
             services.AddSingleton<HttpClient>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(option => option.EnableEndpointRouting = false);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0_1);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
