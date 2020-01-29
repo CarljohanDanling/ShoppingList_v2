@@ -1,43 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingListWebApi.Database;
-using ShoppingListWebApi.Models;
+using ShoppingListWebApi.Model;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace ShoppingListWebApi.Controllers
 {
-    [Route("api/shoppinglist/{shoppingListId}/item")]
+    [Route("api/shoppinglist/item")]
     [ApiController]
     public class ItemController : ControllerBase
     {
-        private IRepository repo;
+        private readonly ShoppingListContext _context;
 
-        public ItemController(IRepository repos)
+        public ItemController(ShoppingListContext context)
         {
-            repo = repos;
+            _context = context;
         }
 
-        // GET /api/shoppinglist/5/item
-        // GET all items related to specific shopping list
-        [HttpGet]
-        public List<Item> GetAllItemsRelatedToSpecificShoppingList(int shoppingListId)
-        {
-            List<Item> items = repo.GetAllItemsRelatedToSpecificShoppingList(shoppingListId);
-            return items;
-        }
-
-        // POST /api/shoppinglist/5/item
+        // POST: /api/shoppinglist/item/13
         // POST an item into a shoppinglist
-        [HttpPost]
+        [HttpPost("{shoppingListId}")]
         public IActionResult InsertItem(int shoppingListId, [FromBody] Item values)
         {
             try
             {
                 values.ShoppingListId = shoppingListId;
-                repo.InsertItem(values);
+                _context.Item.Add(values);
+                _context.SaveChanges();
             }
             catch
             {
@@ -46,31 +34,39 @@ namespace ShoppingListWebApi.Controllers
             return Ok("Item added");
         }
 
-        /*
-        // GET: api/Item/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+
+        // PATCH: api/shoppinglist/item/1
+        // PATCH to update/change an item
+        [HttpPatch("{itemId}")]
+        public async Task<IActionResult> UpdateItem(int itemId, [FromBody]JsonPatchDocument<Item> item)
         {
-            return "value";
+            try
+            {
+                item.ApplyTo(await _context.Item.FindAsync(itemId), ModelState);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return StatusCode(500, "Unable to update the item");
+            }
+            return Ok();
         }
 
-        // POST: api/Item
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // DELETE: /api/shoppinglist/item/1
+        // DELETES an item from database
+        [HttpDelete("{itemId}")]
+        public async Task<IActionResult> DeleteItem(int itemId)
         {
+            try
+            {
+                _context.Item.Remove(new Item() { ItemId = itemId });
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return StatusCode(500, "Unable to delete item");
+            }
+            return Ok("Successfully deleted item");
         }
-
-        // PUT: api/Item/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-        */
     }
 }

@@ -1,0 +1,28 @@
+﻿@page
+@model ShoppingListWebApp.Pages.Shopper.CreateListModel
+@{
+    ViewData["Title"] = "CreateList";
+}
+
+<h2 class="header-padding">Create shoppinglist</h2>
+
+<div>
+    <form method="post">
+        <div class="create-shoppinglist-wrapper">
+            <div asp-validation-summary="ModelOnly"></div>
+            <label asp-for="ShoppingList.Name"></label>
+            <input asp-for="ShoppingList.Name" type="text" />
+            <span asp-validation-for="ShoppingList.Name" class="danger-text"></span>
+
+            <label asp-for="ShoppingList.BudgetSum"></label>
+            <input asp-for="ShoppingList.BudgetSum" type="number" />
+            <span asp-validation-for="ShoppingList.BudgetSum" class="danger-text"></span>
+
+            <input class="create-shoppinglist-button" type="submit" value="Create" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

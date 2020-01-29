@@ -1,0 +1,23 @@
+﻿@model ShoppingListWebApp.Pages.Shopper.ViewSelectedListModel
+
+<div id="add-more-items">
+    <form method="post" asp-page-handler="CreateItem">
+        <div class="item" >
+            <div asp-validation-summary="ModelOnly"></div>
+            <label style="font-size: small;" asp-for="Item.Name"></label>
+            <input class="input-style" asp-for="Item.Name" type="text" />
+            <span asp-validation-for="Item.Name" class="danger-text"></span>
+
+            <label style="font-size: small;" asp-for="Item.Price"></label>
+            <input class="input-style item-price" asp-for="Item.Price" type="number"/>
+            <span asp-validation-for="Item.Price" class="danger-text"></span>
+
+            <label style="font-size: small;" asp-for="Item.Quantity"></label>
+            <input class="input-style item-quantity" asp-for="Item.Quantity" type="number"/>
+            <span asp-validation-for="Item.Quantity" class="danger-text"></span>
+
+            <input type="hidden" value="@Model.ShoppingList.ShoppingListId" name="shoppingListId" />
+            <input class="item-Manager create-item-button" type="submit" value="Create" />
+        </div>
+    </form>
+</div>

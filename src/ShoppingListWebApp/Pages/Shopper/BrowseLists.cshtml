@@ -1,0 +1,42 @@
+﻿@page
+@model ShoppingListWebApp.Pages.Shopper.BrowseListsModel
+@{
+    ViewData["Title"] = "BrowseLists";
+}
+
+<h2 class="header-padding">Shoppinglists:</h2>
+
+<section id="shoppinglists-header-wrapper">
+    <div class="shoppinglists-headers">
+        <div>
+            @Html.DisplayNameFor(m => m.ShoppingList.FirstOrDefault().Name)
+        </div>
+        <div>
+            @Html.DisplayNameFor(m => m.ShoppingList.FirstOrDefault().BudgetSum)
+        </div>
+    </div>
+</section>
+
+<section id="shoppinglists-content">
+    @foreach (var shoppinglist in Model.ShoppingList)
+    {
+        <div class="shoppinglist">
+            <div>
+                @Html.DisplayFor(m => shoppinglist.Name)
+            </div>
+            <div>
+                @Html.DisplayFor(m => shoppinglist.BudgetSum)
+            </div>
+            <div class="view-remove-list">
+                <a asp-page="/Shopper/ViewSelectedList" asp-route-shoppingListId="@shoppinglist.ShoppingListId">
+                    <input class="view-list" type="button" value="View list" />
+                </a>
+                <a asp-page-handler="DeleteList" asp-route-shoppingListId="@shoppinglist.ShoppingListId">
+                    <input class="remove-list" type="button" value="Delete list" />
+                </a>
+            </div>
+        </div>
+    }
+</section>
+
+<a asp-page-handler="Something"></a>

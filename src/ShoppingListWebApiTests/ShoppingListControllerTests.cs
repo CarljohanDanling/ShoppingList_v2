@@ -1,172 +1,210 @@
 using System;
-using Xunit;
 using ShoppingListWebApi.Controllers;
 using ShoppingListWebApiTests.Mocks;
 using System.Collections.Generic;
-using ShoppingListWebApi.Models;
+using ShoppingListWebApi.Model;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
+using Xunit;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShoppingListWebApiTests
 {
     public class ShoppingListControllerTests
     {
+        private DbContextOptions<ShoppingListContext> ReturnDbContextOptions(string databaseString)
+        {
+            return new DbContextOptionsBuilder<ShoppingListContext>()
+                .UseInMemoryDatabase(databaseName: databaseString)
+                .Options;
+        }
+
         [Fact]
         public void GetAllShoppingLists_NoShoppingLists_EmptyListOfShoppingLists()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("GetAllShoppingLists_NoShoppingLists_EmptyListOfShoppingLists");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-            };
-            var sut = new ShoppingListController(repoMock);
+                var sut = new ShoppingListController(context);
 
-            //Act
-            var result = sut.GetAllShoppingLists();
+                // Act
+                var result = sut.GetAllShoppingLists();
 
-            //Assert
-            Assert.Empty(result);
+                // Assert
+                Assert.Empty(result);
+            }
         }
 
         [Fact]
-        public void GetAllShoppingLists_OneShoppingListInRepo_ListContainingOneShoppingList()
+        public void GetAllShoppingLists_OneShoppingList_ListContainingOneShoppingList()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("GetAllShoppingLists_OneShoppingList_ListContainingOneShoppingList");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-                {
-                    new ShoppingList()
-                    {
-                        ShoppingListId = 1,
-                        BudgetSum = 100,
-                        Name ="Test list1"
-                    }
-                }
-            };
-            var sut = new ShoppingListController(repoMock);
+                context.ShoppingList.Add(new ShoppingList { Name = "Test", BudgetSum = 20 });
+                context.SaveChanges();
+            }
 
-            //Act
-            var result = sut.GetAllShoppingLists();
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(context);
 
-            //Assert
-            Assert.Single(result);
+                // Act
+                var result = sut.GetAllShoppingLists();
+
+                // Assert 
+                Assert.Single(result);
+            }
         }
 
         [Fact]
-        public void GetAllShoppingLists_ManyShoppingListsInRepo_ListContainingManyShoppingLists()
+        public void GetAllShoppingLists_ManyShoppingLists_ListContainingManyShoppingLists()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("GetAllShoppingLists_ManyShoppingLists_ListContainingManyShoppingLists");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-                {
-                    new ShoppingList()
-                    {
-                        ShoppingListId = 1,
-                        BudgetSum = 100,
-                        Name ="Test list1"
-                    },
-                    new ShoppingList()
-                    {
-                        ShoppingListId = 2,
-                        BudgetSum = 120,
-                        Name ="Test list2"
-                    }
-                }
-            };
-            var sut = new ShoppingListController(repoMock);
+                context.ShoppingList.Add(new ShoppingList { Name = "Test", BudgetSum = 20 });
+                context.ShoppingList.Add(new ShoppingList { Name = "Test2", BudgetSum = 50 });
+                context.SaveChanges();
+            }
 
-            //Act
-            var result = sut.GetAllShoppingLists();
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(context);
 
-            //Assert
-            Assert.True(result.Count > 1);
+                // Act
+                var result = sut.GetAllShoppingLists();
+
+                // Assert 
+                Assert.True(result.Count > 1);
+            }
         }
 
         [Fact]
         public void InsertShoppingList_InputShoppingListIsNull_StatusCode500IsReturned()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("InsertShoppingList_InputShoppingListIsNull_StatusCode500IsReturned");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-            };
-            var sut = new ShoppingListController(repoMock);
+                var sut = new ShoppingListController(context);
 
-            //Act 
-            var result = sut.InsertShoppingList(null);
+                // Act
+                var result = sut.InsertShoppingList(null);
 
-            //Assert
-            var objectResult = result as ObjectResult;
-            Assert.Equal(500, objectResult.StatusCode);
+                //Assert
+                var objectResult = result as ObjectResult;
+                Assert.Equal(500, objectResult.StatusCode);
+            }
         }
 
         [Fact]
         public void InsertShoppingList_OneShoppingList_StatusCode200IsReturned()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("InsertShoppingList_OneShoppingList_StatusCode200IsReturned");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-                {
-                    new ShoppingList()
-                    {
-                        ShoppingListId = 21,
-                        Name = "TestShoppingList",
-                        BudgetSum = 280
-                    }
-                }
-            };
-            var sut = new ShoppingListController(repoMock);
+                var sut = new ShoppingListController(context);
 
-            //Act
-            var result = sut.InsertShoppingList(repoMock.MockShoppingListResult[0]);
+                // Act
+                var result = sut.InsertShoppingList(new ShoppingList { Name = "test", BudgetSum = 50 });
 
-            //Assert
-            Assert.IsType<OkObjectResult>(result);
+                //Assert
+                var objectResult = result as ObjectResult;
+                Assert.IsType<OkObjectResult>(result);
+            }
         }
 
         [Fact]
         public void GetDetailedInformationOfSpecificShoppingList_NoShoppingList_EmptyListOfShoppingList()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("GetDetailedInformationOfSpecificShoppingList_NoShoppingList_EmptyListOfShoppingList");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-            };
-            var sut = new ShoppingListController(repoMock);
+                var sut = new ShoppingListController(context);
 
-            //Act
-            var result = sut.GetDetailedInformationOfSpecificShoppingList(5);
+                // Act
+                var result = sut.GetShoppingListWithRelatedItems(5);
 
-            //Assert
-            Assert.Empty(result);
+                // Assert
+                Assert.Empty(result);
+            }
         }
 
         [Fact]
         public void GetDetailedInformationOfSpecificShoppingList_OneShoppingList_ListContainingOneShoppingList()
         {
-            //Arrange
-            var repoMock = new RepositoryMock()
+            var options = ReturnDbContextOptions("GetDetailedInformationOfSpecificShoppingList_OneShoppingList_ListContainingOneShoppingList");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
             {
-                MockShoppingListResult = new List<ShoppingList>()
-                {
-                    new ShoppingList()
-                    {
-                        ShoppingListId = 5,
-                        BudgetSum = 100,
-                        Name ="Test list1"
-                    }
-                }
+                context.ShoppingList.Add(new ShoppingList { Name = "Test", BudgetSum = 20, ShoppingListId = 5});
+                context.Item.Add(new Item {
+                    Name = "föremål",
+                    Price = 20,
+                    Quantity = 2,
+                    ShoppingListId = 5 });
+                context.SaveChanges();
+            }
+
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(context);
+
+                // Act
+                var result = sut.GetShoppingListWithRelatedItems(5);
+
+                // Assert
+                Assert.Single(result);
+            }
+        }
+
+        [Fact]
+        public void UpdateShoppingList_NoUpdatedShoppingList_ReturnShoppingListsAreEqual()
+        {
+            var options = ReturnDbContextOptions("UpdateShoppingList_NoUpdatedShoppingList_ReturnShoppingListsAreEqual");
+
+            // Arrange
+            var shoppingList = new ShoppingList()
+            {
+                Name = "Test",
+                BudgetSum = 20,
+                ShoppingListId = 5
             };
-            var sut = new ShoppingListController(repoMock);
 
-            //Act
-            var result = sut.GetDetailedInformationOfSpecificShoppingList(repoMock.MockShoppingListResult[0].ShoppingListId);
+            using (var context = new ShoppingListContext(options))
+            {
+                context.ShoppingList.Add(shoppingList);
+                context.SaveChanges();
+            }
 
-            //Assert
-            Assert.Single(result);
+            using (var context = new ShoppingListContext(options))
+            {
+                context.Update(shoppingList);
+                context.SaveChanges();
+            }
+
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(context);
+
+                // Act
+                var result = sut.UpdateShoppingList(5, new ShoppingList { Name = "Test", BudgetSum = 20, ShoppingListId = 5 });
+
+                // Assert
+                Assert.Equals(shoppingList, result);
+            }
         }
     }
 }

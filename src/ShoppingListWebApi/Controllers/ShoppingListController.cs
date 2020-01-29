@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingListWebApi.Models;
-using ShoppingListWebApi.Database;
+using ShoppingListWebApi.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShoppingListWebApi.Controllers
 {
@@ -12,88 +11,89 @@ namespace ShoppingListWebApi.Controllers
     [ApiController]
     public class ShoppingListController : ControllerBase
     {
-        private IRepository repo;
+        private readonly ShoppingListContext _context;
 
-        public ShoppingListController(IRepository repos)
+        public ShoppingListController(ShoppingListContext context)
         {
-            repo = repos;
+            _context = context;
         }
 
-        // GET api/shoppinglist
+        // GET: api/shoppinglist
         // Get all shopping lists from database.
         [HttpGet]
-        public List<ShoppingList> GetAllShoppingLists()
+        public async Task<List<ShoppingList>> GetAllShoppingLists()
         {
-            List<ShoppingList> shoppingList = repo.GetAllShoppingLists();
+            return await _context.ShoppingList.AsNoTracking().ToListAsync();
+        }
+
+        // GET: /api/shoppinglist/5
+        // GET information about shopping list and all related items
+        [HttpGet("{shoppingListId}")]
+        public async Task<ActionResult<ShoppingList>> GetShoppingListWithRelatedItems(int shoppingListId)
+        {
+            var shoppingList = await _context.ShoppingList.Include(s => s.Items).FirstOrDefaultAsync(s => s.ShoppingListId == shoppingListId);
+            if (shoppingList == null)
+            {
+                return BadRequest();
+            }
+
             return shoppingList;
         }
 
-        // POST api/shoppinglist
-        // POST shopping lists to database and returns it.
+        // POST: api/shoppinglist
+        // POST shopping lists to database.
         [HttpPost]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        public IActionResult InsertShoppingList([FromBody] ShoppingList values)
+        public async Task<IActionResult> InsertShoppingList([FromBody] ShoppingList shoppingList)
         {
-            ShoppingList shoppingListObject = new ShoppingList();
-
             try
             {
-                shoppingListObject.Name = values.Name;
-                shoppingListObject.BudgetSum = values.BudgetSum;
-
-                shoppingListObject.ShoppingListId = repo.InsertShoppingList(values);
+                await _context.ShoppingList.AddAsync(shoppingList);
+                await _context.SaveChangesAsync();
             }
             catch
             {
                 return StatusCode(500, "(Unable to add shopping list)");
             }
 
-            return Ok(shoppingListObject);
+            return Ok("Shopping list added");
         }
 
-        // GET /api/shoppinglist/5
-        // GET detailed information about the shopping list (name, budget)
-        [HttpGet("{shoppingListId}")]
-        public List<ShoppingList> GetDetailedInformationOfSpecificShoppingList(int shoppingListId)
-        {
-            List<ShoppingList> shoppingList = repo.GetDetailedInformationOfSpecificShoppingList(shoppingListId);
-            return shoppingList;
-        }
 
-        // PUT api/shoppinglist/5
+        // PUT: api/shoppinglist/5
         // PUT to update/change the shopping list in database.
         [HttpPut("{shoppingListId}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
         public IActionResult UpdateShoppingList(int shoppingListId, [FromBody] ShoppingList values)
         {
-            ShoppingList shoppingListObject = new ShoppingList();
             try
             {
-                repo.UpdateShoppingList(shoppingListObject);
+                var shoppingListToUpdate = _context.ShoppingList.First(s => s.ShoppingListId == shoppingListId);
+                shoppingListToUpdate.Name = values.Name;
+                shoppingListToUpdate.BudgetSum = values.BudgetSum;
+
+                _context.ShoppingList.Update(shoppingListToUpdate);
+                _context.SaveChanges();
             }
             catch
             {
-                return StatusCode(400, "(Unable to update shopping list)");
+                return StatusCode(500, "(Unable to update shopping list)");
             }
-            return Ok(shoppingListObject);
+            return Ok(values);
         }
 
-        // DELETE api/shoppinglist/5
+
+        // DELETE: api/shoppinglist/5
         // Deletes the actual shopping list
         [HttpDelete("{shoppingListId}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public IActionResult DeleteShoppingList(int shoppingListId)
+        public async Task<IActionResult> DeleteShoppingList(int shoppingListId)
         {
             try
             {
-                repo.DeleteShoppingList(shoppingListId);
+                _context.ShoppingList.Remove(new ShoppingList() { ShoppingListId = shoppingListId });
+                await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(400, ex.Message + "(Unable to delete shopping list)");
+                return StatusCode(500, "(Unable to delete shopping list)");
             }
             return Ok("Successfully deleted shopping list");
         }

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using ShoppingListWebApi.Database;
+using Microsoft.EntityFrameworkCore;
+using ShoppingListWebApi.Model;
 
 namespace ShoppingListWebApi
 {
@@ -26,9 +21,15 @@ namespace ShoppingListWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            // on /api/shoppinglist then new ShoppingListController(IRepository)
-            // on /api/shoppinglist then new ShoppingListController(new Repository)
-            services.AddTransient<IRepository, Repository>();
+            
+            // Prevents returned broken JSON.
+            services.AddMvc()
+                .AddJsonOptions(
+                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+            
+            // Configuring DI-for database access.
+            services.AddDbContext<ShoppingListContext>(options => options.UseSqlServer(@"Data Source=(local)\SQLEXPRESS;Initial Catalog=ShoppingList;Integrated Security=True"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

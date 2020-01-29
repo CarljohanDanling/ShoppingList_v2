@@ -1,0 +1,33 @@
+﻿@model ShoppingListWebApp.Pages.Shopper.ViewSelectedListModel
+
+<section id="item-content">
+    @foreach (var item in Model.ShoppingList.Items)
+    {
+        <form method="post" asp-page-handler="BudgetHandler">
+            <div id="@item.ItemId" class="item">
+                <div asp-validation-summary="ModelOnly"></div>
+
+                <label asp-for="Item.Name"></label>
+                <input class="input-style" asp-for="Item.Name" value="@item.Name" type="text" />
+                <span asp-validation-for="Item.Name" class="danger-text"></span>
+
+                <label asp-for="Item.Price"></label>
+                <input class="input-style item-price" asp-for="Item.Price" value="@item.Price" type="number" />
+                <span asp-validation-for="Item.Price" class="danger-text"></span>
+
+                <label asp-for="Item.Quantity"></label>
+                <input class="input-style item-quantity" asp-for="Item.Quantity" value="@item.Quantity" type="number" />
+                <span asp-validation-for="Item.Quantity" class="danger-text"></span>
+
+                <div class="update-remove">
+                    <input type="hidden" value="@Model.ShoppingList.ShoppingListId" name="shoppingListId" />
+                    <input type="hidden" value="@item.ItemId" name="itemId" />
+                    <input type="submit" class="item-Manager update-item" id="@item.ItemId" value="Update" />
+                    <a asp-page-handler="DeleteItem" asp-route-shoppingListId="@Model.ShoppingList.ShoppingListId" asp-route-itemId="@item.ItemId">
+                        <input type="button" value="Delete" class="remove-item" />
+                    </a>
+                </div>
+            </div>
+        </form>
+    }
+</section>

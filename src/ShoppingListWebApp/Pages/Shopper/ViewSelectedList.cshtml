@@ -1,0 +1,104 @@
+﻿@page
+@model ShoppingListWebApp.Pages.Shopper.ViewSelectedListModel
+@{
+    ViewData["Title"] = "ViewSelectedList";
+}
+
+<h2 class="header-padding">Here are detailed information about your shoppinglist</h2>
+
+<p>@Model.ShoppingList.Name | Budget: @Model.ShoppingList.BudgetSum</p>
+<hr class="hr-line" />
+
+@if (Model.ShoppingList.Items.Count > 0)
+{
+    <partial name="_ViewItemsContentPartial" />
+    <hr class="hr-line" />
+    <a id="add-link">+ Add item here</a>
+    <a id="hide-link">- Hide here</a>
+    <partial name="_CreateItemPartial" />
+}
+
+else
+{
+    <p class="danger-text" style="padding-bottom: 1rem;">No items found...create one.</p>
+    <partial name="_CreateItemPartial" />
+}
+
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        let updateButtons = document.querySelectorAll('.item-Manager');
+        var budgetSum = @Model.ShoppingList.BudgetSum;
+
+        updateButtons.forEach(b => {
+            b.addEventListener("click", event => {
+                let items = document.querySelectorAll("div.item");
+
+                let priceAndQuantityItemArray = returnPriceAndQuantity(items, b.id);
+                let itemSum = priceAndQuantityItemArray.reduce((a, b) => a * b);
+                let totalSum = returnTotalSum(items);
+
+                if (itemSum > budgetSum || totalSum > budgetSum) {
+                    alert("You are over budget!");
+                    event.preventDefault();
+                }
+            })
+        })
+
+        function returnPriceAndQuantity(items, buttonId) {
+            let priceAndQuantityArray = [];
+
+            items.forEach(f => {
+                if (f.id === buttonId) {
+                    var correctItem = f;
+
+                    let price = f.querySelector('.item-price').value;
+                    let quantity = f.querySelector('.item-quantity').value;
+                    priceAndQuantityArray = [price, quantity];
+                }
+            })
+            return priceAndQuantityArray;
+        }
+
+        function returnTotalSum(items) {
+            let totalSum = 0;
+
+            items.forEach(f => {
+
+                if (f !== null) {
+                    let price = f.querySelector('.item-price').value;
+                    let quantity = f.querySelector('.item-quantity').value;
+
+                    let tempNumber = price * quantity;
+                    totalSum += tempNumber;
+                }
+            })
+            return totalSum;
+        }
+    </script>
+
+    <script>
+            var addMoreItemsDiv = document.querySelector("#add-more-items");
+            var addLink = document.querySelector("#add-link");
+            var hideLink = document.querySelector("#hide-link");
+            hideLink.style.display = "none";
+
+            if (@Model.ShoppingList.Items.Count > 0) { addMoreItemsDiv.style.display = "none"; }
+
+            addLink.addEventListener("click", () => {
+                addMoreItemsDiv.style.display = "block";
+                addLink.style.display = "none";
+                hideLink.style.display = "block";
+            })
+
+            hideLink.addEventListener("click", () => {
+                addMoreItemsDiv.style.display = "none";
+                addLink.style.display = "block";
+                hideLink.style.display = "none";
+            })
+
+    </script>
+}

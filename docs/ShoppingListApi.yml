@@ -112,3 +112,10 @@ paths:
           description: Successfully added item to related to specific shopping list
         '500':
           description: Unable to add item
+    delete:
+      description: Delete an existing item
+      responses:
+        '200':
+          description: Successfully deleted an item
+        '400':
+          description: Could not delete the item
