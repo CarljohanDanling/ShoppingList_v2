@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ShoppingListWebApi.Controllers;
 using ShoppingListWebApi.Model;
 using ShoppingListWebApi.Service;
 using Xunit;
@@ -22,13 +24,14 @@ namespace ShoppingListWebApiTests
             // Arrange
             using (var context = new ShoppingListContext(options))
             {
-                var sut = new Repository(context);
+                var repo = new Repository(context);
+                var sut = new ShoppingListController(repo);
 
                 // Act
                 var result = await sut.GetAllShoppingListsAsync();
 
                 // Assert
-                Assert.Empty(result);
+                Assert.Empty(result.Value);
             }
         }
 
@@ -51,13 +54,13 @@ namespace ShoppingListWebApiTests
 
             using (var context = new ShoppingListContext(options))
             {
-                var sut = new Repository(context);
+                var sut = new ShoppingListController(new Repository(context));
 
                 // Act
                 var result = await sut.GetAllShoppingListsAsync();
 
                 // Assert
-                Assert.Single(result);
+                Assert.Single(result.Value);
             }
         }
 
@@ -78,13 +81,52 @@ namespace ShoppingListWebApiTests
 
             using (var context = new ShoppingListContext(options))
             {
-                var sut = new Repository(context);
+                var sut = new ShoppingListController(new Repository(context));
 
                 // Act
                 var result = await sut.GetAllShoppingListsAsync();
 
                 // Assert
-                Assert.True(result.Count > 1);
+                Assert.True(result.Value.Count > 1);
+            }
+        }
+
+        [Fact]
+        public async void Should_ReturnStatusCode500_When_InsertingShoppingListWithNull()
+        {
+            var options = ReturnDbContextOptions("Should_ReturnStatusCode500_When_InsertingShoppingListWithNull");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(new Repository(context));
+
+                // Act
+                var result = await sut.InsertShoppingListAsync(null);
+
+                // Assert
+                var objectResult = result as ObjectResult;
+                Assert.Equal(500, objectResult.StatusCode);
+            }
+        }
+
+        [Fact]
+        public async void Should_ReturnStatusCode200_When_InsertingOneShoppingList()
+        {
+            var options = ReturnDbContextOptions("Should_ReturnStatusCode200_When_InsertingOneShoppingList");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(new Repository(context));
+
+                // Act
+                var result = await sut.InsertShoppingListAsync(
+                    new ShoppingList { Name = "Test", BudgetSum = 50 });
+
+                // Assert
+                var objectResult = result as ObjectResult;
+                Assert.IsType<OkObjectResult>(result);
             }
         }
     }
