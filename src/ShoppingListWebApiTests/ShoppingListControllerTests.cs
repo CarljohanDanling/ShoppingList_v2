@@ -24,8 +24,7 @@ namespace ShoppingListWebApiTests
             // Arrange
             using (var context = new ShoppingListContext(options))
             {
-                var repo = new Repository(context);
-                var sut = new ShoppingListController(repo);
+                var sut = new ShoppingListController(new Repository(context));
 
                 // Act
                 var result = await sut.GetAllShoppingListsAsync();
