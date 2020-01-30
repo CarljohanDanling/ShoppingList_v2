@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ShoppingListWebApi.Model;
 using Newtonsoft.Json;
 using ShoppingListWebApi.Service;
+using Microsoft.Extensions.Hosting;
 
 namespace ShoppingListWebApi
 {
@@ -27,13 +28,13 @@ namespace ShoppingListWebApi
 
             // Configuring DI-for database access.
             services.AddDbContext<ShoppingListContext>(options =>
-                options.UseSqlServer(@"Data Source=(local)\SQLEXPRESS;Initial Catalog=ShoppingList;Integrated Security=True"));
+                options.UseSqlServer(Configuration.GetConnectionString("ShoppingListDatabase")));
 
             services.AddTransient<IRepository, Repository>();
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

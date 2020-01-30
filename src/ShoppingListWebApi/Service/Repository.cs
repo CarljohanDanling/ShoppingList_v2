@@ -21,7 +21,7 @@ namespace ShoppingListWebApi.Service
         {
             return await _context.ShoppingList
                 .AsNoTracking()
-                .Include(s => s.Items)
+                .Include(i => i.Items)
                 .FirstOrDefaultAsync(s => s.ShoppingListId == shoppingListId);
         }
 
