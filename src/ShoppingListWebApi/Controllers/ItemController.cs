@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
 using ShoppingListWebApi.Model;
+using ShoppingListWebApi.Service;
 
 namespace ShoppingListWebApi.Controllers
 {
@@ -9,63 +10,64 @@ namespace ShoppingListWebApi.Controllers
     [ApiController]
     public class ItemController : ControllerBase
     {
-        private readonly ShoppingListContext _context;
+        private readonly IRepository _repository;
 
-        public ItemController(ShoppingListContext context)
+        public ItemController(IRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // POST: /api/shoppinglist/item/13
         // POST an item into a shoppinglist
         [HttpPost("{shoppingListId}")]
-        public IActionResult InsertItem(int shoppingListId, [FromBody] Item values)
+        public async Task<IActionResult> InsertItemAsync(int shoppingListId, [FromBody] Item values)
         {
             try
             {
-                values.ShoppingListId = shoppingListId;
-                _context.Item.Add(values);
-                _context.SaveChanges();
+                await _repository.InsertItemAsync(shoppingListId, values);
             }
+
             catch
             {
                 return StatusCode(500, "Unable to add item");
             }
-            return Ok("Item added");
-        }
 
+            return Ok("Successfully added item");
+        }
 
         // PATCH: api/shoppinglist/item/1
         // PATCH to update/change an item
         [HttpPatch("{itemId}")]
-        public async Task<IActionResult> UpdateItem(int itemId, [FromBody]JsonPatchDocument<Item> item)
+        public async Task<IActionResult> UpdateItemAsync(int itemId, [FromBody]JsonPatchDocument<Item> item)
         {
             try
             {
-                item.ApplyTo(await _context.Item.FindAsync(itemId), ModelState);
-                _context.SaveChanges();
+                await _repository.UpdateItemAsync(itemId, item);
             }
+
             catch
             {
                 return StatusCode(500, "Unable to update the item");
             }
-            return Ok();
+
+            return Ok("Successfully updated the item");
         }
 
         // DELETE: /api/shoppinglist/item/1
         // DELETES an item from database
         [HttpDelete("{itemId}")]
-        public async Task<IActionResult> DeleteItem(int itemId)
+        public async Task<IActionResult> DeleteItemAsync(int itemId)
         {
             try
             {
-                _context.Item.Remove(new Item() { ItemId = itemId });
-                await _context.SaveChangesAsync();
+                await _repository.DeleteItemAsync(itemId);
             }
+
             catch
             {
                 return StatusCode(500, "Unable to delete item");
             }
+
             return Ok("Successfully deleted item");
         }
     }

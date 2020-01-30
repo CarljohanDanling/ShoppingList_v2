@@ -22,7 +22,7 @@ namespace ShoppingListWebApp.Pages.Shopper
 
         public async Task OnGet()
         {
-            var response = await _httpClient.GetAsync("http://localhost:61122/api/shoppinglist");
+            var response = await _httpClient.GetAsync("api/shoppinglist");
 
             if (response.IsSuccessStatusCode)
             {

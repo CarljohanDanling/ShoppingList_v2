@@ -1,8 +1,9 @@
+using System;
+using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,9 +26,22 @@ namespace ShoppingListWebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSingleton<HttpClient>();
+            services.AddSingleton(SetupHttpClient());
             services.AddMvc(option => option.EnableEndpointRouting = false);
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0_1);
+        }
+
+        public HttpClient SetupHttpClient()
+        {
+            Uri endPoint = new Uri("http://localhost:61122/");
+            HttpClient httpClient = new HttpClient()
+            {
+                BaseAddress = endPoint
+            };
+
+            ServicePointManager.FindServicePoint(endPoint)
+                .ConnectionLeaseTimeout = 60000;
+
+            return httpClient;
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
