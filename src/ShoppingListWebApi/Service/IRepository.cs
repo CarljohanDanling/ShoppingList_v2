@@ -11,7 +11,7 @@ namespace ShoppingListWebApi.Service
         /***** SHOPPINGLIST *****/
 
         Task<List<ShoppingList>> GetAllShoppingListsAsync();
-        Task<ActionResult<ShoppingList>> GetShoppingListWithRelatedItemsAsync(int shoppingListId);
+        Task<ShoppingList> GetShoppingListWithRelatedItemsAsync(int shoppingListId);
         Task InsertShoppingListAsync(ShoppingList shoppingList);
         Task UpdateShoppingListAsync(int shoppingListId, ShoppingList values);
         Task DeleteShoppingListAsync(int shoppingListId);

@@ -17,7 +17,7 @@ namespace ShoppingListWebApi.Service
         public async Task<List<ShoppingList>> GetAllShoppingListsAsync()
             => await _context.ShoppingList.AsNoTracking().ToListAsync();
 
-        public async Task<ActionResult<ShoppingList>> GetShoppingListWithRelatedItemsAsync(int shoppingListId)
+        public async Task<ShoppingList> GetShoppingListWithRelatedItemsAsync(int shoppingListId)
         {
             return await _context.ShoppingList
                 .AsNoTracking()

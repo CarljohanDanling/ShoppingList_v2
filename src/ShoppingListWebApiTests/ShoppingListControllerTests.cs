@@ -87,6 +87,7 @@ namespace ShoppingListWebApiTests
 
                 // Assert
                 Assert.True(result.Value.Count > 1);
+                Assert.Equal(2, result.Value.Count);
             }
         }
 
@@ -127,6 +128,25 @@ namespace ShoppingListWebApiTests
                 var objectResult = result as ObjectResult;
                 Assert.IsType<OkObjectResult>(result);
             }
+        }
+
+        [Fact]
+        public async void Should_ReturnNullForSpecificShoppingList()
+        {
+            var options = ReturnDbContextOptions("Should_ReturnNullForSpecificShoppingList");
+
+            // Arrange
+            using (var context = new ShoppingListContext(options))
+            {
+                var sut = new ShoppingListController(new Repository(context));
+
+                // Act
+                var result = await sut.GetShoppingListWithRelatedItemsAsync(5);
+
+                // Assert
+                Assert.Null(result.Value);
+            }
+
         }
     }
 }
